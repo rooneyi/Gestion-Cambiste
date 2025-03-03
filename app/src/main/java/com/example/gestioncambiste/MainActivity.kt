@@ -3,19 +3,36 @@ package com.example.gestioncambiste
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.gestioncambiste.ui.HomeScreen
+import com.example.gestioncambiste.ui.User
+import com.example.gestioncambiste.ui.UserViewModel
 import com.example.gestioncambiste.ui.theme.GestionCambisteTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,7 +44,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginScreen()
+                    val userViewModel: UserViewModel = viewModel(
+                        factory = UserViewModelFactory((application as GestionCambisteApplication).repository)
+                    )
+                    LoginScreen(userViewModel = userViewModel)
                 }
             }
         }
@@ -35,11 +55,20 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(userViewModel: UserViewModel) {
     var showSignUp by remember { mutableStateOf(false) }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var loggedInUser by remember { mutableStateOf<User?>(null) }
 
-    if (showSignUp) {
-        SignUpScreen(onNavigateToLogin = { showSignUp = false })
+    if (loggedInUser != null) {
+        HomeScreen(user = loggedInUser!!)
+    } else if (showSignUp) {
+        SignUpScreen(
+            userViewModel = userViewModel,
+            onNavigateToLogin = { showSignUp = false }
+        )
     } else {
         Column(
             modifier = Modifier
@@ -54,9 +83,6 @@ fun LoginScreen() {
                 color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(24.dp))
-
-            var email by remember { mutableStateOf("") }
-            var password by remember { mutableStateOf("") }
 
             OutlinedTextField(
                 value = email,
@@ -78,7 +104,18 @@ fun LoginScreen() {
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { /* Gérer la connexion */ },
+                onClick = {
+                    userViewModel.loginUser(
+                        email = email,
+                        password = password,
+                        onSuccess = { user ->
+                            loggedInUser = user
+                        },
+                        onFailure = {
+                            errorMessage = "Email ou mot de passe incorrect."
+                        }
+                    )
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Se connecter")
@@ -93,12 +130,28 @@ fun LoginScreen() {
                     color = MaterialTheme.colorScheme.primary
                 )
             )
+
+            errorMessage?.let {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun SignUpScreen(onNavigateToLogin: () -> Unit) {
+fun SignUpScreen(
+    userViewModel: UserViewModel,
+    onNavigateToLogin: () -> Unit
+) {
+    var fullName by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -112,10 +165,6 @@ fun SignUpScreen(onNavigateToLogin: () -> Unit) {
             color = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(24.dp))
-
-        var fullName by remember { mutableStateOf("") }
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
 
         OutlinedTextField(
             value = fullName,
@@ -145,7 +194,15 @@ fun SignUpScreen(onNavigateToLogin: () -> Unit) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { /* Gérer l'inscription */ },
+            onClick = {
+                if (fullName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
+                    val user = User(fullName = fullName, email = email, password = password)
+                    userViewModel.insertUser(user)
+                    onNavigateToLogin()
+                } else {
+                    errorMessage = "Veuillez remplir tous les champs."
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "S'inscrire")
@@ -160,21 +217,13 @@ fun SignUpScreen(onNavigateToLogin: () -> Unit) {
                 color = MaterialTheme.colorScheme.primary
             )
         )
-    }
-}
 
-@Preview(showBackground = true, name = "Login Screen Preview")
-@Composable
-fun PreviewLoginScreen() {
-    GestionCambisteTheme {
-        LoginScreen()
-    }
-}
-
-@Preview(showBackground = true, name = "SignUp Screen Preview")
-@Composable
-fun PreviewSignUpScreen() {
-    GestionCambisteTheme {
-        SignUpScreen(onNavigateToLogin = {})
+        errorMessage?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+        }
     }
 }
