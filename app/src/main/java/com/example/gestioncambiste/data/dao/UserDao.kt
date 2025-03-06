@@ -1,8 +1,9 @@
-package com.example.gestioncambiste.ui
+package com.example.gestioncambiste.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.example.gestioncambiste.data.model.User
 
 @Dao
 interface UserDao {

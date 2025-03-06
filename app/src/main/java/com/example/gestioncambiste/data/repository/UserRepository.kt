@@ -1,6 +1,7 @@
-package com.example.gestioncambiste.ui
+package com.example.gestioncambiste.data.repository
 
-import kotlinx.coroutines.flow.Flow
+import com.example.gestioncambiste.data.model.User
+import com.example.gestioncambiste.data.dao.UserDao
 
 class UserRepository(private val userDao: UserDao) {
 

@@ -1,7 +1,9 @@
-package com.example.gestioncambiste.ui
+package com.example.gestioncambiste.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gestioncambiste.data.model.User
+import com.example.gestioncambiste.data.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class UserViewModel(private val userRepository: UserRepository) : ViewModel() {

@@ -1,4 +1,4 @@
-package com.example.gestioncambiste.ui
+package com.example.gestioncambiste.ui.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.gestioncambiste.data.model.User
 
 @Composable
 fun HomeScreen(user: User) {
@@ -27,4 +28,7 @@ fun HomeScreen(user: User) {
             style = MaterialTheme.typography.bodyLarge
         )
     }
+
 }
+
+

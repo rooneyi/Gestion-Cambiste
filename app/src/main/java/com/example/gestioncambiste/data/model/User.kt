@@ -1,4 +1,4 @@
-package com.example.gestioncambiste.ui
+package com.example.gestioncambiste.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
