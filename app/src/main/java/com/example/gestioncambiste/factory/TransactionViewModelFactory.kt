@@ -1,6 +1,7 @@
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.gestioncambiste.inter.TransactionManager
+import com.example.gestioncambiste.viewmodel.TransactionViewModel
 
 class TransactionViewModelFactory(
     private val transactionManager: TransactionManager

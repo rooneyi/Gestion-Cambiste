@@ -25,10 +25,21 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         }
     }
 
+    fun getUserByEmail(email: String, onResult: (User?) -> Unit) {
+        viewModelScope.launch {
+            val user = userRepository.getUserByEmail(email)
+            onResult(user)
+        }
+    }
+
+
     fun checkEmailExists(email: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             val user = userRepository.getUserByEmail(email)
             onResult(user != null)
         }
     }
+
+
+
 }

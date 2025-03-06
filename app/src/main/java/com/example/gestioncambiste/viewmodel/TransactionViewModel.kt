@@ -1,3 +1,5 @@
+package com.example.gestioncambiste.viewmodel
+
 import androidx.lifecycle.ViewModel
 import com.example.gestioncambiste.inter.Transaction
 import com.example.gestioncambiste.inter.TransactionManager

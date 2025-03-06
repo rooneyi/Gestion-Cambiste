@@ -1,6 +1,6 @@
 package com.example.gestioncambiste.ui.screen
 
-import TransactionViewModel
+import com.example.gestioncambiste.viewmodel.TransactionViewModel
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 
@@ -29,11 +29,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.gestioncambiste.data.model.User
+import com.example.gestioncambiste.viewmodel.ExchangeRateViewModel
 import com.example.gestioncambiste.viewmodel.UserViewModel
 
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
-fun LoginScreen(userViewModel: UserViewModel, transactionViewModel: TransactionViewModel) {
+fun LoginScreen(userViewModel: UserViewModel, transactionViewModel: TransactionViewModel,exchangeRateViewModel: ExchangeRateViewModel) {
     var showSignUp by remember { mutableStateOf(false) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -41,7 +42,7 @@ fun LoginScreen(userViewModel: UserViewModel, transactionViewModel: TransactionV
     var loggedInUser by remember { mutableStateOf<User?>(null) }
 
     if (loggedInUser != null) {
-        HomeScreen(user = loggedInUser!!, transactionViewModel = transactionViewModel)
+        HomeScreen(user = loggedInUser!!, transactionViewModel = transactionViewModel, exchangeRateViewModel = exchangeRateViewModel)
     } else if (showSignUp) {
         SignUpScreen(
             userViewModel = userViewModel,
