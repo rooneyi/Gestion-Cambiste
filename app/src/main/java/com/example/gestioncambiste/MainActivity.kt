@@ -1,5 +1,7 @@
 package com.example.gestioncambiste
 
+import TransactionViewModel
+import TransactionViewModelFactory
 import com.example.gestioncambiste.ui.screen.LoginScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -25,7 +27,11 @@ class MainActivity : ComponentActivity() {
                     val userViewModel: UserViewModel = viewModel(
                         factory = UserViewModelFactory((application as GestionCambisteApplication).repository)
                     )
-                    LoginScreen(userViewModel = userViewModel)
+                    val transactionViewModel: TransactionViewModel = viewModel(
+                        factory = TransactionViewModelFactory((application as GestionCambisteApplication).transactionManager)
+                    )
+
+                    LoginScreen(userViewModel = userViewModel,transactionViewModel = transactionViewModel)
                 }
             }
         }
